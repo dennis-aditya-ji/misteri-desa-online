@@ -471,13 +471,13 @@ io.on('connection', (socket) => {
                 });
             } else if (role === ROLES.WEREWOLF.name) {
                 socket.emit('chat message', `[KONFIRMASI] Anda memilih membunuh <strong>${players[targetId].name}</strong>.`);
-                io.to(player.desa).emit('chat message', `[INFO] ${player.name} telah mengunci target malam ini.`);
+                io.to(player.desa).emit('chat message', `[INFO] ${player.role} ingin mencari target malam ini.`);
             } else if (role === ROLES.DOCTOR.name) {
                 socket.emit('chat message', `[KONFIRMASI] Anda melindungi <strong>${players[targetId].name}</strong>.`);
-                io.to(player.desa).emit('chat message', `[INFO] ${player.name} telah mengunci target malam ini.`);
+                io.to(player.desa).emit('chat message', `[INFO] ${player.role} ingin menyelamatkan warga desa.`);
             } else if (role === ROLES.SEER.name) {
                  socket.emit('chat message', `[KONFIRMASI] Anda mengintip <strong>${players[targetId].name}</strong>.`);
-                 io.to(player.desa).emit('chat message', `[INFO] ${player.name} telah mengunci target malam ini.`);
+                 io.to(player.desa).emit('chat message', `[INFO] ${player.role} telah keliling desa ini.`);
             }
         } else {
              socket.emit('desa error', 'Target tidak valid.');
