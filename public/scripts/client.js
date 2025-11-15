@@ -3,7 +3,11 @@
 // --- KONEKSI (PERUBAHAN KRUSIAL UNTUK ONLINE) ---
 // HARAP GANTI "URL_RENDER_ANDA_DISINI" DENGAN URL ASLI YANG ANDA DAPAT DARI RENDER!
 const SERVER_URL = ""; 
-const socket = io(SERVER_URL); 
+const socket = io(SERVER_URL, {
+    reconnection: true,             
+    reconnectionAttempts: Infinity, 
+    reconnectionDelay: 1000         
+});  
 
 // --- DEKLARASI ELEMEN ---
 const gameContainer = document.getElementById('game-container');
@@ -179,15 +183,37 @@ socket.on('show voting', () => {
 
 // 6. MENERIMA HASIL GAME (SFX BARU)
 socket.on('game over', (data) => {
-    playSound(sfxTada); // SFX BARU: Kemenangan
-    alert(`GAME OVER! Pemenang: ${data.winner}. Pesan: ${data.message}`);
-    
-    roomScreen.style.display = 'none';
-    lobbyScreen.style.display = 'flex';
-    cycleStatusDisplay.textContent = 'Gapura';
+    // 1. Buat Daftar Pemain dalam bentuk HTML
+    let playerListHTML = '<h3>Peran Semua Pemain:</h3><ul style="list-style:none; padding: 0;">';
+    data.allPlayers.forEach(p => {
+        const teamColor = p.team === 'Penghasut' ? '#FF6F61' : '#4caf50'; 
+        playerListHTML += `<li style="margin-bottom: 5px; text-align: left; border-left: 3px solid ${teamColor}; padding-left: 5px;">${p.name} - <strong>${p.role}</strong> <span style="color: ${teamColor}">(${p.team})</span></li>`;
+    });
+    playerListHTML += '</ul>';
+
+    // 2. Buat Card Pop-up
+    const overlay = document.createElement('div');
+    overlay.className = 'game-over-overlay';
+
+    const card = document.createElement('div');
+    card.className = 'game-over-card';
+
+    const htmlContent = `
+        <h2>GAME OVER!</h2>
+        <p>Pemenang: <strong>${data.winner}</strong></p>
+        <p>${data.message}</p>
+        ${playerListHTML}
+        <button onclick="window.location.reload()">Selesai / Main Lagi</button>
+    `;
+
+    card.innerHTML = htmlContent;
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    roomScreen.style.display = 'none'; // Sembunyikan room utama
     isDead = false; 
-    socket.emit('rejoin lobby'); 
 });
+
 
 // 7. CHAT MESSAGE DAN DETEKSI KEMATIAN
 socket.on('chat message', function(msg) {
@@ -410,4 +436,5 @@ function renderTutorialContent() {
         
         <p style="margin-top: 20px;">Permainan membutuhkan minimal 4 pemain untuk dimulai.</p>
     `;
+
 }
