@@ -20,7 +20,7 @@ const desas = {};
 
 // --- KONSTANTA GAME ---
 const PHASES = {
-    NIGHT: { name: 'Malam', duration: 40 }, // 40 detik
+    NIGHT: { name: 'Malam', duration: 60 }, // 40 detik
     DAY: { name: 'Siang', duration: 90 },  // 90 detik
     VOTING: { name: 'Voting', duration: 45 } // 45 detik
 };
@@ -324,9 +324,18 @@ function checkWinCondition(desaName) {
     
     const wolves = alivePlayers.filter(p => p.team === 'Penghasut').length;
     const villagers = alivePlayers.filter(p => p.team === 'Warga').length;
-
+    const allPlayersInDesa = desa.players.map(id => ({
+        name: players[id].name,
+        role: players[id].role, 
+        team: players[id].team
+    }));
+    
     if (wolves === 0) {
-        io.to(desaName).emit('game over', { winner: 'Warga', message: 'Semua Penghasut telah ditemukan dan dieksekusi. Warga Desa menang!' });
+        io.to(desaName).emit('game over', { 
+            winner: 'Warga', 
+            message: 'Semua Penghasut telah ditemukan dan dieksekusi. Warga Desa menang!',
+            allPlayers: allPlayersInDesa // PASTIKAN ADA
+        });
         desa.status = 'lobby';
         if (desa.game.loopInterval) clearInterval(desa.game.loopInterval);
         updateDesasList();
@@ -334,7 +343,11 @@ function checkWinCondition(desaName) {
     }
 
     if (wolves >= villagers) {
-        io.to(desaName).emit('game over', { winner: 'Penghasut', message: 'Jumlah Penghasut menyamai Warga Desa. Desa dikuasai kebohongan. Penghasut menang!' });
+         io.to(desaName).emit('game over', { 
+            winner: 'Penghasut', 
+            message: 'Jumlah Penghasut menyamai Warga Desa. Desa dikuasai kebohongan. Penghasut menang!',
+            allPlayers: allPlayersInDesa // PASTIKAN ADA
+        });
         desa.status = 'lobby';
         if (desa.game.loopInterval) clearInterval(desa.game.loopInterval);
         updateDesasList();
@@ -539,3 +552,4 @@ server.listen(PORT, () => {
     console.log(`Server siap dijalankan di port ${PORT}`);
 
 });
+
