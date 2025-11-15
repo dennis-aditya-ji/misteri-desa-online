@@ -461,7 +461,7 @@ io.on('connection', (socket) => {
             if (role === ROLES.VIGILANTE.name) {
                 player.vigilanteBullets--;
                 socket.emit('chat message', `[KONFIRMASI] Anda menembak <strong>${players[targetId].name}</strong>. Peluru tersisa: ${player.vigilanteBullets}.`);
-                io.to(player.desa).emit('chat message', `[INFO] ${player.name} telah mengunci target malam ini.`);
+                io.to(player.desa).emit('chat message', `[INFO] Pensiunan Tentara telah mengunci target mencurigakan malam ini.`);
                 io.to(socket.id).emit('your role', { 
                     name: player.role,
                     desc: ROLES.VIGILANTE.desc,
@@ -471,13 +471,13 @@ io.on('connection', (socket) => {
                 });
             } else if (role === ROLES.WEREWOLF.name) {
                 socket.emit('chat message', `[KONFIRMASI] Anda memilih membunuh <strong>${players[targetId].name}</strong>.`);
-                io.to(player.desa).emit('chat message', `[INFO] ${player.role} ingin mencari target malam ini.`);
+                io.to(player.desa).emit('chat message', `[INFO] Sang Penghasut ingin mencari target malam ini.`);
             } else if (role === ROLES.DOCTOR.name) {
                 socket.emit('chat message', `[KONFIRMASI] Anda melindungi <strong>${players[targetId].name}</strong>.`);
-                io.to(player.desa).emit('chat message', `[INFO] ${player.role} ingin menyelamatkan warga desa.`);
+                io.to(player.desa).emit('chat message', `[INFO] Dokter Polindes ingin menyelamatkan warga desa.`);
             } else if (role === ROLES.SEER.name) {
                  socket.emit('chat message', `[KONFIRMASI] Anda mengintip <strong>${players[targetId].name}</strong>.`);
-                 io.to(player.desa).emit('chat message', `[INFO] ${player.role} telah keliling desa ini.`);
+                 io.to(player.desa).emit('chat message', `[INFO] Pak RT telah keliling desa ini.`);
             }
         } else {
              socket.emit('desa error', 'Target tidak valid.');
@@ -537,4 +537,5 @@ io.on('connection', (socket) => {
 app.use(express.static(path.join(__dirname, 'public')));
 server.listen(PORT, () => {
     console.log(`Server siap dijalankan di port ${PORT}`);
+
 });
