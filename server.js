@@ -72,6 +72,12 @@ function updatePlayerCount() {
 // --- LOGIKA PEMBAGIAN PERAN ---
 function assignRoles(desaName) {
     const desa = desas[desaName];
+    
+    if (!desa) {
+        console.error(`[ERROR] Desa ${desaName} tidak ditemukan saat pembagian peran.`);
+        return;
+    }
+    
     const playerIds = [...desa.players];
     
     let availableRoles = [];
@@ -560,11 +566,8 @@ io.on('connection', (socket) => {
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
-server.listen(PORT, () => {
-    console.log(`Server siap dijalankan di port ${PORT}`);
-
-});
 app.get('/keep-alive', (req, res) => {
     res.status(200).send('Server is alive!');
 });
-
+server.listen(PORT, () => {
+    console.log(`Server siap dijalankan di port ${PORT}`);
