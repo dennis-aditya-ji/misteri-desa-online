@@ -414,7 +414,19 @@ io.on('connection', (socket) => {
             socket.emit('desa error', 'Anda sudah berada di desa lain.');
             return;
         }
-
+        
+        // START: TAMBAHKAN PENGUMUMAN INI
+        const pengumumanStabilitas = `
+            <p style="color: #ffd700; background: #3e2723; border: 1px solid #ffaa00; padding: 10px; border-radius: 5px; margin: 5px 0;">
+                📢 <strong>Pembaruan Koneksi: Jantung Desa (Heartbeat)!</strong><br>
+                Jika Anda beralih aplikasi (misalnya WhatsApp) dan kembali <strong>< 90 detik</strong>, Anda <strong>TETAP DI DESA</strong>.<br>
+                Sistem hanya akan mencatat Keluar Desa jika sinyal terputus total <strong>> 90 detik</strong>.
+            </p>
+        `;
+        // Kirim pesan pengumuman hanya kepada pemain yang baru bergabung (socket.emit)
+        socket.emit('chat message', pengumumanStabilitas);
+        // END: TAMBAHKAN PENGUMUMAN
+        
         desa.players.push(socket.id);
         players[socket.id].desa = desaName;
         socket.join(desaName);
@@ -551,5 +563,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 server.listen(PORT, () => {
     console.log(`Server siap dijalankan di port ${PORT}`);
 
+});
+app.get('/keep-alive', (req, res) => {
+    res.status(200).send('Server is alive!');
 });
 
